@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { EvaluationResponse } from '../types';
 import { ScoreBar } from './ScoreBar';
@@ -6,9 +5,12 @@ import { ThumbsUpIcon } from './icons/ThumbsUpIcon';
 import { ThumbsDownIcon } from './icons/ThumbsDownIcon';
 import { InfoIcon } from './icons/InfoIcon';
 import { SparkleIcon } from './icons/SparkleIcon';
+import { AudioPlayer } from './AudioPlayer';
+import { MicIcon } from './icons/MicIcon';
 
 interface EvaluationResultProps {
   result: EvaluationResponse;
+  audioBlob: Blob | null;
 }
 
 const ResultCard: React.FC<{ title: string; children: React.ReactNode; icon: React.ReactNode }> = ({ title, children, icon }) => (
@@ -22,7 +24,7 @@ const ResultCard: React.FC<{ title: string; children: React.ReactNode; icon: Rea
 );
 
 
-export const EvaluationResult: React.FC<EvaluationResultProps> = ({ result }) => {
+export const EvaluationResult: React.FC<EvaluationResultProps> = ({ result, audioBlob }) => {
   const { feedback, score_summary, speech_delivery, follow_up_questions } = result;
 
   return (
@@ -60,6 +62,12 @@ export const EvaluationResult: React.FC<EvaluationResultProps> = ({ result }) =>
             </div>
         </div>
       </ResultCard>
+
+      {audioBlob && (
+        <ResultCard title="Vocal Response Playback" icon={<MicIcon className="h-6 w-6 text-brand-secondary"/>}>
+            <AudioPlayer audioBlob={audioBlob} />
+        </ResultCard>
+      )}
 
       {speech_delivery.clarity !== 'N/A' && (
         <ResultCard title="Speech Delivery Analysis" icon={<InfoIcon className="h-6 w-6 text-brand-secondary"/>}>

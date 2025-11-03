@@ -14,11 +14,13 @@ const App: React.FC = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isGeneratingQuestion, setIsGeneratingQuestion] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
+  const [submissionAudio, setSubmissionAudio] = useState<Blob | null>(null);
 
   const handleEvaluate = async (textAnswer: string, audioBlob: Blob | null) => {
     setIsLoading(true);
     setError(null);
     setEvaluation(null);
+    setSubmissionAudio(audioBlob);
 
     let audioData: { mimeType: string; data: string } | null = null;
     if (audioBlob) {
@@ -110,7 +112,7 @@ const App: React.FC = () => {
           {evaluation && !isLoading && (
             <div className="mt-8">
               <h2 className="text-2xl font-bold mb-4 text-slate-700 dark:text-slate-200">Evaluation Results</h2>
-              <EvaluationResult result={evaluation} />
+              <EvaluationResult result={evaluation} audioBlob={submissionAudio} />
             </div>
           )}
         </div>
