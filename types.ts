@@ -31,3 +31,12 @@ export interface EvaluationResponse {
   score_summary: ScoreSummary;
   follow_up_questions?: string[];
 }
+
+export interface EvaluationHistoryItem {
+  id: string;
+  question: string;
+  evaluation: EvaluationResponse;
+  submittedAt: string; // ISO string for timestamp
+  textAnswer: string;
+  audioDataUrl: string | null;
+}
