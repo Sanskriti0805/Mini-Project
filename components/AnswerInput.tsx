@@ -58,14 +58,17 @@ export const AnswerInput: React.FC<AnswerInputProps> = ({ onEvaluate, isLoading 
     : "bg-brand-secondary hover:bg-blue-700 focus:ring-blue-500";
     
   return (
-    <form onSubmit={handleSubmit} className="p-6 bg-white dark:bg-slate-800 rounded-lg shadow-lg">
-      <h3 className="text-lg font-semibold mb-3 text-slate-700 dark:text-slate-200">Your Answer</h3>
-      <div className="mb-4">
+    <form onSubmit={handleSubmit} className="p-6 sm:p-8 bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm rounded-2xl shadow-xl border border-slate-200/50 dark:border-slate-700/50 hover:shadow-2xl transition-all duration-300">
+      <div className="mb-5">
+        <h3 className="text-xl font-bold mb-1 text-slate-800 dark:text-slate-100">Your Answer</h3>
+        <p className="text-sm text-slate-500 dark:text-slate-400">Type your response or record your voice</p>
+      </div>
+      <div className="mb-5">
         <textarea
           value={textAnswer}
           onChange={(e) => setTextAnswer(e.target.value)}
-          placeholder="Type your answer here, or use the microphone to record your voice."
-          className="w-full h-32 p-3 border border-slate-300 dark:border-slate-600 rounded-md focus:ring-2 focus:ring-brand-secondary focus:border-brand-secondary transition duration-150 bg-gray-50 dark:bg-slate-700 text-slate-900 dark:text-slate-100"
+          placeholder="Type your answer here, or use the microphone to record your voice..."
+          className="w-full h-36 p-4 border-2 border-slate-300 dark:border-slate-600 rounded-xl focus:ring-2 focus:ring-brand-secondary focus:border-brand-secondary transition-all duration-200 bg-gradient-to-br from-slate-50 to-white dark:from-slate-700 dark:to-slate-800 text-slate-900 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 resize-none font-medium"
           disabled={isLoading}
         />
       </div>
@@ -75,19 +78,32 @@ export const AnswerInput: React.FC<AnswerInputProps> = ({ onEvaluate, isLoading 
             type="button"
             onClick={isRecording ? handleStopRecording : handleStartRecording}
             disabled={isLoading}
-            className={`flex items-center justify-center w-12 h-12 rounded-full text-white shadow-md transition-transform transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-offset-2 dark:focus:ring-offset-slate-800 ${recordButtonClass}`}
+            className={`flex items-center justify-center w-14 h-14 rounded-full text-white shadow-lg transition-all duration-200 transform hover:scale-110 active:scale-95 focus:outline-none focus:ring-2 focus:ring-offset-2 dark:focus:ring-offset-slate-800 ${recordButtonClass} ${isRecording ? 'animate-pulse' : ''}`}
           >
-            {isRecording ? <StopIcon className="w-6 h-6" /> : <MicIcon className="w-6 h-6" />}
+            {isRecording ? <StopIcon className="w-7 h-7" /> : <MicIcon className="w-7 h-7" />}
           </button>
-          <div className="text-sm text-slate-500 dark:text-slate-400">
-            {isRecording && <p className="animate-pulse">Recording...</p>}
-            {audioBlob && !isRecording && <p className="text-green-600 dark:text-green-400 font-medium">Audio ready!</p>}
+          <div className="text-sm">
+            {isRecording && (
+              <div className="flex items-center gap-2">
+                <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse"></div>
+                <p className="text-red-600 dark:text-red-400 font-semibold">Recording...</p>
+              </div>
+            )}
+            {audioBlob && !isRecording && (
+              <div className="flex items-center gap-2">
+                <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                <p className="text-green-600 dark:text-green-400 font-semibold">Audio ready!</p>
+              </div>
+            )}
+            {!isRecording && !audioBlob && (
+              <p className="text-slate-500 dark:text-slate-400">Click to record</p>
+            )}
           </div>
         </div>
         <button
           type="submit"
           disabled={isLoading || (!textAnswer && !audioBlob)}
-          className="w-full sm:w-auto inline-flex items-center justify-center px-6 py-3 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-brand-primary hover:bg-blue-900 focus:outline-none focus:ring-2 focus:ring-offset-2 dark:focus:ring-offset-slate-800 focus:ring-brand-primary disabled:bg-slate-400 dark:disabled:bg-slate-600 disabled:cursor-not-allowed transition"
+          className="w-full sm:w-auto inline-flex items-center justify-center px-8 py-3.5 border border-transparent text-base font-semibold rounded-xl shadow-lg text-white bg-gradient-to-r from-brand-primary to-brand-secondary hover:from-blue-900 hover:to-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 dark:focus:ring-offset-slate-800 focus:ring-brand-primary disabled:bg-slate-400 dark:disabled:bg-slate-600 disabled:cursor-not-allowed transition-all duration-200 transform hover:scale-105 active:scale-95"
         >
           <SendIcon className="w-5 h-5 mr-2" />
           {isLoading ? 'Evaluating...' : 'Evaluate Answer'}

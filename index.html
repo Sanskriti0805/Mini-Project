@@ -16,10 +16,33 @@
               'brand-light': '#dbeafe',
               'brand-dark': '#1e293b',
             },
+            animation: {
+              'fadeIn': 'fadeIn 0.5s ease-in-out',
+              'slideUp': 'slideUp 0.4s ease-out',
+              'shimmer': 'shimmer 2s infinite',
+            },
+            keyframes: {
+              fadeIn: {
+                '0%': { opacity: '0', transform: 'translateY(10px)' },
+                '100%': { opacity: '1', transform: 'translateY(0)' },
+              },
+              slideUp: {
+                '0%': { opacity: '0', transform: 'translateY(20px)' },
+                '100%': { opacity: '1', transform: 'translateY(0)' },
+              },
+              shimmer: {
+                '0%': { transform: 'translateX(-100%)' },
+                '100%': { transform: 'translateX(100%)' },
+              },
+            },
           },
         },
       }
     </script>
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+      body { font-family: 'Inter', sans-serif; }
+    </style>
   <!-- CDN imports removed for local Vite development - using npm packages instead -->
 </head>
   <body class="bg-gray-100 dark:bg-brand-dark">
