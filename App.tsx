@@ -1,14 +1,15 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { QuestionSelector } from './components/QuestionSelector.tsx';
 import { AnswerInput } from './components/AnswerInput.tsx';
 import { EvaluationResult } from './components/EvaluationResult.tsx';
+import { EvaluationHistory } from './components/EvaluationHistory.tsx';
 import { evaluateAnswer, generateRandomQuestion } from './services/geminiService.ts';
-import { EvaluationResponse } from './types.ts';
+import { EvaluationResponse, EvaluationHistoryItem } from './types.ts';
 import { QUESTIONS } from './constants.ts';
 import { LogoIcon } from './components/icons/LogoIcon.tsx';
+import { blobToDataUrl } from './utils/blobUtils.ts';
 
 const App: React.FC = () => {
-  console.log('App component rendering...');
   const [questions, setQuestions] = useState<string[]>(QUESTIONS);
   const [selectedQuestion, setSelectedQuestion] = useState<string>(QUESTIONS[0]);
   const [evaluation, setEvaluation] = useState<EvaluationResponse | null>(null);
@@ -16,6 +17,27 @@ const App: React.FC = () => {
   const [isGeneratingQuestion, setIsGeneratingQuestion] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
   const [submissionAudio, setSubmissionAudio] = useState<Blob | null>(null);
+  const [evaluationHistory, setEvaluationHistory] = useState<EvaluationHistoryItem[]>([]);
+
+  useEffect(() => {
+    try {
+      const storedHistory = localStorage.getItem('evaluationHistory');
+      if (storedHistory) {
+        setEvaluationHistory(JSON.parse(storedHistory));
+      }
+    } catch (error) {
+      console.error("Failed to load evaluation history from localStorage", error);
+      setEvaluationHistory([]);
+    }
+  }, []);
+
+  useEffect(() => {
+    try {
+      localStorage.setItem('evaluationHistory', JSON.stringify(evaluationHistory));
+    } catch (error) {
+      console.error("Failed to save evaluation history to localStorage", error);
+    }
+  }, [evaluationHistory]);
 
   const handleEvaluate = async (textAnswer: string, audioBlob: Blob | null) => {
     setIsLoading(true);
@@ -25,19 +47,12 @@ const App: React.FC = () => {
 
     let audioData: { mimeType: string; data: string } | null = null;
     if (audioBlob) {
-      const reader = new FileReader();
-      reader.readAsDataURL(audioBlob);
-      await new Promise<void>((resolve, reject) => {
-        reader.onloadend = () => {
-          const base64Audio = (reader.result as string).split(',')[1];
-          audioData = {
+        const dataUrl = await blobToDataUrl(audioBlob);
+        const base64Audio = dataUrl.split(',')[1];
+        audioData = {
             mimeType: audioBlob.type,
             data: base64Audio,
-          };
-          resolve();
         };
-        reader.onerror = reject;
-      });
     }
     
     if (!textAnswer && !audioBlob) {
@@ -49,16 +64,29 @@ const App: React.FC = () => {
     try {
       const result = await evaluateAnswer(selectedQuestion, textAnswer, audioData);
       setEvaluation(result);
+
+      const audioDataUrl = audioBlob ? await blobToDataUrl(audioBlob) : null;
+      const newHistoryItem: EvaluationHistoryItem = {
+          id: new Date().toISOString() + Math.random(),
+          question: selectedQuestion,
+          evaluation: result,
+          submittedAt: new Date().toISOString(),
+          textAnswer: textAnswer,
+          audioDataUrl: audioDataUrl,
+      };
+      setEvaluationHistory(prev => [newHistoryItem, ...prev]);
+
     } catch (e) {
       console.error(e);
-      const errorMessage = e instanceof Error ? e.message : 'An error occurred during evaluation.';
-      if (errorMessage.includes('GEMINI_API_KEY') || errorMessage.includes('API_KEY')) {
-        setError('API Key not configured. Please create a .env.local file with your GEMINI_API_KEY. See SETUP_GUIDE.md for instructions.');
-      } else {
-        setError(`Error: ${errorMessage}. Please check the console for details.`);
-      }
+      setError('An error occurred during evaluation. Please check the console and try again.');
     } finally {
       setIsLoading(false);
+    }
+  };
+  
+  const handleClearHistory = () => {
+    if (window.confirm("Are you sure you want to clear the entire evaluation history? This action cannot be undone.")) {
+        setEvaluationHistory([]);
     }
   };
 
@@ -73,12 +101,7 @@ const App: React.FC = () => {
       setSelectedQuestion(newQuestion);
     } catch (e) {
       console.error(e);
-      const errorMessage = e instanceof Error ? e.message : 'Failed to generate a new question.';
-      if (errorMessage.includes('GEMINI_API_KEY') || errorMessage.includes('API_KEY')) {
-        setError('API Key not configured. Please create a .env.local file with your GEMINI_API_KEY. See SETUP_GUIDE.md for instructions.');
-      } else {
-        setError(`Error: ${errorMessage}. Please try again.`);
-      }
+      setError("Failed to generate a new question. Please try again.");
     } finally {
       setIsGeneratingQuestion(false);
     }
@@ -126,6 +149,10 @@ const App: React.FC = () => {
               <EvaluationResult result={evaluation} audioBlob={submissionAudio} />
             </div>
           )}
+          
+          <div className="mt-12">
+            <EvaluationHistory history={evaluationHistory} onClearHistory={handleClearHistory} />
+          </div>
         </div>
       </main>
       <footer className="text-center py-4 text-sm text-slate-500 dark:text-slate-400">

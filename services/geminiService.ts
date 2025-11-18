@@ -2,24 +2,7 @@ import { GoogleGenAI, Type } from "@google/genai";
 import { SYSTEM_PROMPT } from '../constants.ts';
 import { EvaluationResponse } from "../types.ts";
 
-// Lazy initialization to prevent errors if API key is missing
-let ai: GoogleGenAI | null = null;
-
-function getAI(): GoogleGenAI {
-  if (!ai) {
-    const apiKey = process.env.API_KEY || process.env.GEMINI_API_KEY;
-    console.log('API Key check:', { 
-      hasAPI_KEY: !!process.env.API_KEY, 
-      hasGEMINI_API_KEY: !!process.env.GEMINI_API_KEY,
-      apiKeyLength: apiKey?.length || 0 
-    });
-    if (!apiKey) {
-      throw new Error("GEMINI_API_KEY is not set. Please create a .env.local file with your API key.");
-    }
-    ai = new GoogleGenAI({ apiKey });
-  }
-  return ai;
-}
+const ai = new GoogleGenAI({ apiKey: process.env.API_KEY as string });
 
 const responseSchema = {
   type: Type.OBJECT,
@@ -97,8 +80,7 @@ export async function evaluateAnswer(
     });
   }
 
-  const aiInstance = getAI();
-  const response = await aiInstance.models.generateContent({
+  const response = await ai.models.generateContent({
     model,
     contents: { parts },
     config: {
@@ -121,8 +103,7 @@ export async function generateRandomQuestion(): Promise<string> {
   const model = 'gemini-2.5-flash';
   const prompt = "Generate a single, interesting interview-style question on a random topic like technology, science, history, or art. Provide only the question text without any quotation marks, preamble, or formatting.";
 
-  const aiInstance = getAI();
-  const response = await aiInstance.models.generateContent({
+  const response = await ai.models.generateContent({
     model,
     contents: prompt,
   });
