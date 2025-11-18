@@ -1,12 +1,12 @@
 import React from 'react';
-import { EvaluationResponse } from '../types';
-import { ScoreBar } from './ScoreBar';
-import { ThumbsUpIcon } from './icons/ThumbsUpIcon';
-import { ThumbsDownIcon } from './icons/ThumbsDownIcon';
-import { InfoIcon } from './icons/InfoIcon';
-import { SparkleIcon } from './icons/SparkleIcon';
-import { AudioPlayer } from './AudioPlayer';
-import { MicIcon } from './icons/MicIcon';
+import { EvaluationResponse } from '../types.ts';
+import { ScoreBar } from './ScoreBar.tsx';
+import { ThumbsUpIcon } from './icons/ThumbsUpIcon.tsx';
+import { ThumbsDownIcon } from './icons/ThumbsDownIcon.tsx';
+import { InfoIcon } from './icons/InfoIcon.tsx';
+import { SparkleIcon } from './icons/SparkleIcon.tsx';
+import { AudioPlayer } from './AudioPlayer.tsx';
+import { MicIcon } from './icons/MicIcon.tsx';
 
 interface EvaluationResultProps {
   result: EvaluationResponse;

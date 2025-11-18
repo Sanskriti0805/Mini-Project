@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
-import { QuestionSelector } from './components/QuestionSelector';
-import { AnswerInput } from './components/AnswerInput';
-import { EvaluationResult } from './components/EvaluationResult';
-import { evaluateAnswer, generateRandomQuestion } from './services/geminiService';
-import { EvaluationResponse } from './types';
-import { QUESTIONS } from './constants';
-import { LogoIcon } from './components/icons/LogoIcon';
+import { QuestionSelector } from './components/QuestionSelector.tsx';
+import { AnswerInput } from './components/AnswerInput.tsx';
+import { EvaluationResult } from './components/EvaluationResult.tsx';
+import { evaluateAnswer, generateRandomQuestion } from './services/geminiService.ts';
+import { EvaluationResponse } from './types.ts';
+import { QUESTIONS } from './constants.ts';
+import { LogoIcon } from './components/icons/LogoIcon.tsx';
 
 const App: React.FC = () => {
   const [questions, setQuestions] = useState<string[]>(QUESTIONS);

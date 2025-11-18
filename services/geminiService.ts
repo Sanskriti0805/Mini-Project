@@ -1,7 +1,6 @@
-
 import { GoogleGenAI, Type } from "@google/genai";
-import { SYSTEM_PROMPT } from '../constants';
-import { EvaluationResponse } from "../types";
+import { SYSTEM_PROMPT } from '../constants.ts';
+import { EvaluationResponse } from "../types.ts";
 
 const ai = new GoogleGenAI({ apiKey: process.env.API_KEY as string });
 
@@ -54,7 +53,7 @@ const responseSchema = {
         description: "1-2 relevant follow-up questions based on the user's answer."
     }
   },
-  required: ["formality", "grammar", "technical_correctness", "speech_delivery", "feedback", "score_summary", "follow_up_questions"],
+  required: ["formality", "grammar", "technical_correctness", "speech_delivery", "feedback", "score_summary"],
 };
 
 export async function evaluateAnswer(
@@ -62,7 +61,7 @@ export async function evaluateAnswer(
   textAnswer: string,
   audioData: { mimeType: string; data: string } | null
 ): Promise<EvaluationResponse> {
-  const model = 'gemini-2.5-flash-lite';
+  const model = 'gemini-2.5-flash';
 
   const textPart = {
     text: `
@@ -101,7 +100,7 @@ export async function evaluateAnswer(
 }
 
 export async function generateRandomQuestion(): Promise<string> {
-  const model = 'gemini-2.5-flash-lite';
+  const model = 'gemini-2.5-flash';
   const prompt = "Generate a single, interesting interview-style question on a random topic like technology, science, history, or art. Provide only the question text without any quotation marks, preamble, or formatting.";
 
   const response = await ai.models.generateContent({
