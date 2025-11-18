@@ -1,7 +1,6 @@
-
 import React from 'react';
-import ReactDOM from 'react-dom/client';
-import App from './App';
+import { createRoot } from 'react-dom/client';
+import App from './App.tsx';
 
 console.log('index.tsx: Starting React app...');
 
@@ -12,7 +11,7 @@ if (!rootElement) {
 }
 
 console.log('index.tsx: Root element found, creating root...');
-const root = ReactDOM.createRoot(rootElement);
+const root = createRoot(rootElement);
 
 console.log('index.tsx: Rendering App component...');
 root.render(

@@ -1,8 +1,7 @@
-
 import React, { useState, useRef, useCallback } from 'react';
-import { MicIcon } from './icons/MicIcon';
-import { StopIcon } from './icons/StopIcon';
-import { SendIcon } from './icons/SendIcon';
+import { MicIcon } from './icons/MicIcon.tsx';
+import { StopIcon } from './icons/StopIcon.tsx';
+import { SendIcon } from './icons/SendIcon.tsx';
 
 interface AnswerInputProps {
   onEvaluate: (textAnswer: string, audioBlob: Blob | null) => void;

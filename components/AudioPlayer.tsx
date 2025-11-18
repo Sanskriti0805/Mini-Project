@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { PlayIcon } from './icons/PlayIcon';
-import { PauseIcon } from './icons/PauseIcon';
+import { PlayIcon } from './icons/PlayIcon.tsx';
+import { PauseIcon } from './icons/PauseIcon.tsx';
 
 interface AudioPlayerProps {
     audioBlob: Blob;
