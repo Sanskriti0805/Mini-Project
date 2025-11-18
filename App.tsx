@@ -8,6 +8,7 @@ import { QUESTIONS } from './constants';
 import { LogoIcon } from './components/icons/LogoIcon';
 
 const App: React.FC = () => {
+  console.log('App component rendering...');
   const [questions, setQuestions] = useState<string[]>(QUESTIONS);
   const [selectedQuestion, setSelectedQuestion] = useState<string>(QUESTIONS[0]);
   const [evaluation, setEvaluation] = useState<EvaluationResponse | null>(null);
@@ -50,7 +51,12 @@ const App: React.FC = () => {
       setEvaluation(result);
     } catch (e) {
       console.error(e);
-      setError('An error occurred during evaluation. Please check the console and try again.');
+      const errorMessage = e instanceof Error ? e.message : 'An error occurred during evaluation.';
+      if (errorMessage.includes('GEMINI_API_KEY') || errorMessage.includes('API_KEY')) {
+        setError('API Key not configured. Please create a .env.local file with your GEMINI_API_KEY. See SETUP_GUIDE.md for instructions.');
+      } else {
+        setError(`Error: ${errorMessage}. Please check the console for details.`);
+      }
     } finally {
       setIsLoading(false);
     }
@@ -67,7 +73,12 @@ const App: React.FC = () => {
       setSelectedQuestion(newQuestion);
     } catch (e) {
       console.error(e);
-      setError("Failed to generate a new question. Please try again.");
+      const errorMessage = e instanceof Error ? e.message : 'Failed to generate a new question.';
+      if (errorMessage.includes('GEMINI_API_KEY') || errorMessage.includes('API_KEY')) {
+        setError('API Key not configured. Please create a .env.local file with your GEMINI_API_KEY. See SETUP_GUIDE.md for instructions.');
+      } else {
+        setError(`Error: ${errorMessage}. Please try again.`);
+      }
     } finally {
       setIsGeneratingQuestion(false);
     }
