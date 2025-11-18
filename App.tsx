@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { QuestionSelector } from './components/QuestionSelector.tsx';
 import { AnswerInput } from './components/AnswerInput.tsx';
@@ -78,7 +79,8 @@ const App: React.FC = () => {
 
     } catch (e) {
       console.error(e);
-      setError('An error occurred during evaluation. Please check the console and try again.');
+      const errorMessage = e instanceof Error ? e.message : 'An unknown error occurred during evaluation.';
+      setError(errorMessage);
     } finally {
       setIsLoading(false);
     }
@@ -101,7 +103,8 @@ const App: React.FC = () => {
       setSelectedQuestion(newQuestion);
     } catch (e) {
       console.error(e);
-      setError("Failed to generate a new question. Please try again.");
+      const errorMessage = e instanceof Error ? e.message : 'An unknown error occurred while generating a question.';
+      setError(errorMessage);
     } finally {
       setIsGeneratingQuestion(false);
     }
